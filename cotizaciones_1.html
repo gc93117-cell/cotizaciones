@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicios — Estudio de Diseño</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;
+  --ink:#0a0a0a;
+  --ink-2:#3a3a3a;
+  --ink-3:#888;
+  --ink-4:#c8c8c8;
+  --ink-5:#f0f0f0;
+  --gold:#b8965a;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'DM Sans',sans-serif;
+  font-weight:300;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* CURSOR */
+.cursor{
+  position:fixed;width:10px;height:10px;
+  background:var(--ink);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width 0.3s ease,height 0.3s ease,background 0.3s ease;
+}
+.cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1px solid var(--ink);border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:width 0.3s ease,height 0.3s ease,border-color 0.3s ease,opacity 0.3s ease;
+}
+.cursor.hover{width:6px;height:6px;background:var(--gold)}
+.cursor-ring.hover{width:56px;height:56px;border-color:var(--gold);opacity:0.5}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.6rem 3rem;
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:400;letter-spacing:0.05em;
+  color:var(--ink);text-decoration:none;
+  opacity:0;animation:fadeIn 1s ease forwards 0.2s;
+}
+.nav-links{
+  display:flex;gap:2.5rem;list-style:none;
+  opacity:0;animation:fadeIn 1s ease forwards 0.4s;
+}
+.nav-links a{
+  font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--ink-3);text-decoration:none;
+  transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--ink)}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:flex-end;
+  padding:0 3rem 5rem;
+  position:relative;overflow:hidden;
+}
+.hero-bg-text{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-family:'Playfair Display',serif;
+  font-size:clamp(8rem,18vw,22rem);
+  font-weight:400;color:transparent;
+  -webkit-text-stroke:1px var(--ink-5);
+  white-space:nowrap;
+  pointer-events:none;user-select:none;
+  animation:slowZoom 20s ease-in-out infinite alternate;
+}
+@keyframes slowZoom{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.04)}}
+
+.hero-eyebrow{
+  font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1.2rem;
+  opacity:0;animation:fadeUp 1s ease forwards 0.5s;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(3.5rem,8vw,8rem);
+  font-weight:400;line-height:1;
+  letter-spacing:-0.02em;
+  opacity:0;animation:fadeUp 1s ease forwards 0.7s;
+}
+.hero-title em{font-style:italic;color:var(--ink-2)}
+.hero-sub{
+  max-width:420px;
+  font-size:0.88rem;color:var(--ink-3);line-height:1.8;
+  margin-top:1.5rem;
+  opacity:0;animation:fadeUp 1s ease forwards 0.9s;
+}
+.hero-scroll{
+  position:absolute;right:3rem;bottom:4rem;
+  display:flex;flex-direction:column;align-items:center;gap:0.6rem;
+  opacity:0;animation:fadeIn 1s ease forwards 1.4s;
+}
+.hero-scroll span{
+  font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-4);
+  writing-mode:vertical-rl;
+}
+.scroll-line{
+  width:1px;height:60px;background:var(--ink-4);
+  animation:scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse{0%,100%{transform:scaleY(1);opacity:0.4}50%{transform:scaleY(0.5);opacity:1}}
+
+.hero-number{
+  position:absolute;left:3rem;bottom:4rem;
+  font-family:'Playfair Display',serif;
+  font-size:7rem;font-weight:400;color:var(--ink-5);
+  line-height:1;pointer-events:none;
+  opacity:0;animation:fadeIn 1s ease forwards 1.2s;
+}
+
+.section-label{
+  font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1rem;display:block;
+}
+
+/* PACKAGES */
+.packages-section{
+  padding:8rem 3rem;background:var(--ink);color:#fff;
+  position:relative;overflow:hidden;
+}
+.packages-section::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.section-header{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:5rem;
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.5rem,5vw,5rem);
+  font-weight:400;line-height:1.05;color:#fff;
+}
+.section-title em{font-style:italic;color:var(--gold)}
+.section-desc{
+  max-width:260px;font-size:0.82rem;color:#666;
+  line-height:1.8;text-align:right;
+}
+
+/* TOGGLE */
+.toggle-wrap{
+  display:flex;align-items:center;gap:1rem;margin-bottom:3rem;
+}
+.toggle-label{font-size:0.75rem;letter-spacing:0.1em;color:#555;transition:color 0.3s}
+.toggle-label.active{color:#fff}
+.toggle{
+  width:52px;height:26px;background:#222;
+  border:1px solid #333;border-radius:999px;
+  position:relative;cursor:none;transition:background 0.3s;
+}
+.toggle.on{background:var(--gold);border-color:var(--gold)}
+.toggle-knob{
+  position:absolute;top:3px;left:3px;
+  width:18px;height:18px;background:#fff;border-radius:50%;
+  transition:transform 0.3s ease;
+}
+.toggle.on .toggle-knob{transform:translateX(26px)}
+.toggle-save{
+  font-size:0.68rem;letter-spacing:0.12em;color:var(--gold);
+  background:rgba(184,150,90,0.1);
+  padding:0.2rem 0.7rem;border-radius:999px;
+  border:1px solid rgba(184,150,90,0.3);
+}
+
+/* CARDS */
+.cards-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:1px;background:#1a1a1a;
+}
+.pkg{
+  background:#0a0a0a;padding:2.8rem 2.2rem;
+  display:flex;flex-direction:column;
+  cursor:none;position:relative;overflow:hidden;
+  transition:background 0.4s ease;
+}
+.pkg::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;
+  height:2px;background:var(--gold);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 0.4s ease;
+}
+.pkg:hover{background:#111}
+.pkg:hover::after{transform:scaleX(1)}
+
+.pkg-num{
+  font-family:'Playfair Display',serif;
+  font-size:0.75rem;color:#333;margin-bottom:1.5rem;
+}
+.pkg-badge{
+  display:inline-block;font-size:0.6rem;
+  letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);border:1px solid rgba(184,150,90,0.4);
+  padding:0.2rem 0.7rem;border-radius:999px;
+  margin-bottom:1rem;width:fit-content;
+}
+.pkg-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.8rem;font-weight:400;color:#fff;
+  margin-bottom:0.3rem;line-height:1;
+}
+.pkg-price-wrap{
+  display:flex;align-items:baseline;gap:0.3rem;
+  margin:1.5rem 0;padding-bottom:1.5rem;
+  border-bottom:1px solid #1e1e1e;
+}
+.pkg-price{
+  font-family:'Playfair Display',serif;
+  font-size:3rem;font-weight:400;color:#fff;line-height:1;
+  transition:transform 0.2s ease,opacity 0.2s ease;
+}
+.pkg-unit{font-size:0.75rem;color:#444;letter-spacing:0.05em}
+
+.pkg-items{list-style:none;flex:1;display:flex;flex-direction:column;gap:0.85rem;margin-bottom:2rem}
+.pkg-items li{
+  font-size:0.8rem;color:#555;
+  display:flex;align-items:center;gap:0.8rem;line-height:1.4;
+  transition:color 0.3s;
+}
+.pkg:hover .pkg-items li{color:#777}
+.pkg-items li::before{
+  content:'';flex-shrink:0;
+  width:20px;height:1px;background:var(--gold);opacity:0.5;
+}
+.pkg-cta{
+  font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:#333;border:1px solid #222;
+  padding:0.8rem 1.2rem;text-align:center;
+  cursor:none;transition:all 0.3s ease;
+  background:transparent;font-family:'DM Sans',sans-serif;
+  width:100%;
+}
+.pkg:hover .pkg-cta{color:#fff;border-color:#333;background:#1a1a1a}
+.pkg-note{font-size:0.72rem;color:#333;line-height:1.6;margin-bottom:1.5rem;margin-top:auto;padding-top:1.5rem}
+
+/* COMPARE */
+.features-section{
+  padding:8rem 3rem;background:var(--bg);
+  border-top:1px solid var(--ink-5);
+}
+.features-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,4vw,3.5rem);
+  font-weight:400;margin-bottom:4rem;line-height:1.1;
+}
+.features-title em{font-style:italic}
+.compare-table{width:100%;border-collapse:collapse}
+.compare-table th{
+  font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--ink-3);padding:0 1.5rem 1.5rem;text-align:center;
+  font-weight:400;
+}
+.compare-table th:first-child{text-align:left;padding-left:0}
+.compare-table td{
+  padding:1rem 1.5rem;border-top:1px solid var(--ink-5);
+  font-size:0.83rem;color:var(--ink-2);text-align:center;
+  transition:background 0.2s;
+}
+.compare-table td:first-child{text-align:left;padding-left:0;color:var(--ink-3)}
+.compare-table tr:hover td{background:var(--ink-5)}
+.compare-table tr:hover td:first-child{background:transparent}
+.check{color:var(--ink);font-size:1rem}
+.dot{color:var(--ink-4)}
+
+/* PROCESS */
+.process-section{
+  padding:8rem 3rem;background:var(--ink);
+  position:relative;
+}
+.process-section::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.process-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:3rem;margin-top:4rem;
+}
+.process-step{position:relative;padding-top:1.5rem}
+.step-num{
+  font-family:'Playfair Display',serif;
+  font-size:4rem;font-weight:400;
+  color:#1a1a1a;position:absolute;top:0;left:0;line-height:1;
+}
+.step-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.3rem;color:#fff;margin-bottom:0.8rem;
+  margin-left:1.5rem;padding-top:0.5rem;position:relative;
+}
+.step-desc{font-size:0.8rem;color:#555;line-height:1.8;margin-left:1.5rem}
+
+/* CTA */
+.cta-section{
+  padding:10rem 3rem;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;background:var(--bg);
+  position:relative;overflow:hidden;
+}
+.cta-bg{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:600px;height:600px;
+  background:radial-gradient(ellipse,var(--ink-5) 0%,transparent 70%);
+  pointer-events:none;
+}
+.cta-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(3rem,7vw,7rem);
+  font-weight:400;line-height:1.05;
+  letter-spacing:-0.02em;position:relative;
+  margin-bottom:2rem;
+}
+.cta-title em{font-style:italic}
+.cta-btn{
+  display:inline-flex;align-items:center;gap:1rem;
+  font-size:0.72rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--bg);background:var(--ink);
+  padding:1.1rem 2.5rem;cursor:none;
+  border:1px solid var(--ink);
+  transition:all 0.3s ease;position:relative;
+  font-family:'DM Sans',sans-serif;font-weight:400;
+  text-decoration:none;
+}
+.cta-btn:hover{background:transparent;color:var(--ink)}
+.cta-arrow{transition:transform 0.3s ease;display:inline-block}
+.cta-btn:hover .cta-arrow{transform:translateX(6px)}
+
+footer{
+  padding:2.5rem 3rem;
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid var(--ink-5);
+}
+.footer-logo{font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--ink-3)}
+.footer-copy{font-size:0.7rem;color:var(--ink-4);letter-spacing:0.05em}
+
+/* MODAL */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,0.85);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  background:#fff;max-width:420px;width:90%;padding:3rem;
+  position:relative;animation:fadeUp 0.4s ease;
+}
+.modal-close{
+  position:absolute;top:1.5rem;right:1.5rem;
+  background:none;border:none;font-size:1.2rem;
+  cursor:none;color:#888;font-family:'DM Sans',sans-serif;
+}
+.modal-label{
+  font-size:0.65rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:1rem;display:block;
+}
+.modal-title{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:400;margin-bottom:2rem;
+}
+.modal-text{font-size:0.85rem;color:#555;line-height:1.8;margin-bottom:2rem}
+.modal-btn{
+  display:block;background:var(--ink);color:#fff;text-align:center;
+  padding:1rem;font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;
+  text-decoration:none;font-family:'DM Sans',sans-serif;transition:background 0.3s;
+}
+.modal-btn:hover{background:#333}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.8s ease,transform 0.8s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+@media(max-width:768px){
+  nav{padding:1.2rem 1.5rem}
+  .nav-links{display:none}
+  .hero,.packages-section,.features-section,.process-section,.cta-section,footer{padding-left:1.5rem;padding-right:1.5rem}
+  .section-header{flex-direction:column;gap:1.5rem}
+  .section-desc{text-align:left}
+  .hero-number,.hero-scroll{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="#" class="nav-logo">Estudio · DS</a>
+  <ul class="nav-links">
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#comparar">Comparar</a></li>
+    <li><a href="#proceso">Proceso</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg-text">DISEÑO</div>
+  <div class="hero-number">01</div>
+  <p class="hero-eyebrow">Diseño gráfico para redes sociales</p>
+  <h1 class="hero-title">Presencia<br><em>visual</em><br>que vende.</h1>
+  <p class="hero-sub">Contenido minimalista y estratégico para marcas que quieren destacar. Cada pieza diseñada con intención.</p>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<section class="packages-section" id="servicios">
+  <div class="section-header reveal">
+    <div>
+      <span class="section-label">02 — Inversión</span>
+      <h2 class="section-title">Elige tu<br><em>plan</em></h2>
+    </div>
+    <p class="section-desc">Paquetes diseñados para adaptarse a cada etapa de tu negocio. Sin letra pequeña.</p>
+  </div>
+
+  <div class="toggle-wrap reveal">
+    <span class="toggle-label active" id="label-mensual">Mensual</span>
+    <div class="toggle" id="billingToggle">
+      <div class="toggle-knob"></div>
+    </div>
+    <span class="toggle-label" id="label-anual">Anual</span>
+    <span class="toggle-save">Ahorra 15%</span>
+  </div>
+
+  <div class="cards-grid">
+    <div class="pkg reveal reveal-delay-1">
+      <span class="pkg-num">01</span>
+      <p class="pkg-name">Básico</p>
+      <div class="pkg-price-wrap">
+        <span class="pkg-price" data-monthly="20" data-annual="17">$20</span>
+        <span class="pkg-unit">/ mes</span>
+      </div>
+      <ul class="pkg-items">
+        <li>8 posts estáticos</li>
+        <li>Estética minimalista</li>
+        <li>2 revisiones por pieza</li>
+        <li>Entrega PNG y JPG</li>
+      </ul>
+      <p class="pkg-note">Para emprendedores construyendo su presencia digital</p>
+      <button class="pkg-cta" data-plan="Básico">Solicitar plan</button>
+    </div>
+
+    <div class="pkg reveal reveal-delay-2">
+      <span class="pkg-num">02</span>
+      <div class="pkg-badge">Más popular</div>
+      <p class="pkg-name">Estándar</p>
+      <div class="pkg-price-wrap">
+        <span class="pkg-price" data-monthly="45" data-annual="38">$45</span>
+        <span class="pkg-unit">/ mes</span>
+      </div>
+      <ul class="pkg-items">
+        <li>12 posts estáticos</li>
+        <li>4 stories diseñadas</li>
+        <li>Paleta de colores fija</li>
+        <li>3 revisiones por pieza</li>
+        <li>Entrega PNG y PDF</li>
+      </ul>
+      <p class="pkg-note">Para marcas que quieren coherencia visual constante</p>
+      <button class="pkg-cta" data-plan="Estándar">Solicitar plan</button>
+    </div>
+
+    <div class="pkg reveal reveal-delay-3">
+      <span class="pkg-num">03</span>
+      <p class="pkg-name">Premium</p>
+      <div class="pkg-price-wrap">
+        <span class="pkg-price" data-monthly="80" data-annual="68">$80</span>
+        <span class="pkg-unit">/ mes</span>
+      </div>
+      <ul class="pkg-items">
+        <li>16 posts estáticos</li>
+        <li>8 stories diseñadas</li>
+        <li>Portada de perfil</li>
+        <li>Guía de estilo básica</li>
+        <li>Revisiones ilimitadas</li>
+        <li>Todos los formatos</li>
+      </ul>
+      <p class="pkg-note">Para marcas con identidad visual sólida y consistente</p>
+      <button class="pkg-cta" data-plan="Premium">Solicitar plan</button>
+    </div>
+
+    <div class="pkg reveal reveal-delay-4">
+      <span class="pkg-num">04</span>
+      <p class="pkg-name">One-shot</p>
+      <div class="pkg-price-wrap">
+        <span class="pkg-price" data-monthly="5" data-annual="5">$5</span>
+        <span class="pkg-unit">/ pieza</span>
+      </div>
+      <ul class="pkg-items">
+        <li>Posts o flyers sueltos</li>
+        <li>Piezas puntuales</li>
+        <li>Entrega en 24–48 h</li>
+      </ul>
+      <p class="pkg-note">Sin compromisos. Ideal para necesidades puntuales</p>
+      <button class="pkg-cta" data-plan="One-shot">Solicitar pieza</button>
+    </div>
+  </div>
+</section>
+
+<section class="features-section" id="comparar">
+  <span class="section-label reveal">03 — Comparar</span>
+  <h2 class="features-title reveal"><em>Todo</em> lo que<br>incluye cada plan</h2>
+  <div style="overflow-x:auto">
+    <table class="compare-table reveal">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Básico</th>
+          <th style="color:var(--ink)">Estándar</th>
+          <th>Premium</th>
+          <th>One-shot</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Posts estáticos</td><td>8</td><td style="color:var(--ink);font-weight:500">12</td><td>16</td><td>Por pieza</td></tr>
+        <tr><td>Stories</td><td class="dot">—</td><td style="color:var(--ink);font-weight:500">4</td><td>8</td><td class="dot">—</td></tr>
+        <tr><td>Revisiones</td><td>2</td><td style="color:var(--ink);font-weight:500">3</td><td>Ilimitadas</td><td>1</td></tr>
+        <tr><td>Paleta de colores</td><td class="dot">—</td><td style="color:var(--ink)"><span class="check">✓</span></td><td><span class="check">✓</span></td><td class="dot">—</td></tr>
+        <tr><td>Guía de estilo</td><td class="dot">—</td><td class="dot">—</td><td><span class="check">✓</span></td><td class="dot">—</td></tr>
+        <tr><td>Portada de perfil</td><td class="dot">—</td><td class="dot">—</td><td><span class="check">✓</span></td><td class="dot">—</td></tr>
+        <tr><td>Formatos de entrega</td><td>PNG, JPG</td><td style="color:var(--ink);font-weight:500">PNG, PDF</td><td>Todos</td><td>PNG, JPG</td></tr>
+        <tr><td>Entrega urgente</td><td class="dot">—</td><td class="dot">—</td><td class="dot">—</td><td><span class="check">✓</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="process-section" id="proceso">
+  <span class="section-label reveal">04 — Proceso</span>
+  <h2 class="reveal" style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3.5rem);font-weight:400;color:#fff;line-height:1.1">Así <em style="font-style:italic">trabajamos</em><br>juntos</h2>
+  <div class="process-grid">
+    <div class="process-step reveal reveal-delay-1">
+      <span class="step-num">01</span>
+      <h3 class="step-title">Brief</h3>
+      <p class="step-desc">Me cuentas sobre tu marca, tu público y tus objetivos. Mientras más detalle, mejor el resultado.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-2">
+      <span class="step-num">02</span>
+      <h3 class="step-title">Propuesta</h3>
+      <p class="step-desc">Presento una propuesta visual basada en tu identidad. Definimos paleta, tipografía y estilo.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-3">
+      <span class="step-num">03</span>
+      <h3 class="step-title">Diseño</h3>
+      <p class="step-desc">Creo las piezas con atención al detalle. Cada elemento tiene una razón de ser.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-4">
+      <span class="step-num">04</span>
+      <h3 class="step-title">Entrega</h3>
+      <p class="step-desc">Revisamos juntos, ajustamos si hace falta y entrego los archivos listos para publicar.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="contacto">
+  <div class="cta-bg"></div>
+  <span class="section-label reveal" style="color:var(--ink-3)">05 — Hablemos</span>
+  <h2 class="cta-title reveal">¿Listo para<br><em>empezar?</em></h2>
+  <a href="https://instagram.com" class="cta-btn reveal" target="_blank">
+    Escríbeme por Instagram
+    <span class="cta-arrow">→</span>
+  </a>
+</section>
+
+<footer>
+  <span class="footer-logo">Estudio · DS</span>
+  <span class="footer-copy">Diseño gráfico · Venezuela</span>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">✕</button>
+    <span class="modal-label">Solicitud de plan</span>
+    <h3 class="modal-title" id="modal-plan">Plan Estándar</h3>
+    <p class="modal-text">Para continuar, escríbeme directamente por Instagram con el nombre del plan que te interesa. Respondo en menos de 24 horas.</p>
+    <a href="https://instagram.com" target="_blank" class="modal-btn">Abrir Instagram →</a>
+  </div>
+</div>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cursor.style.left=mx+'px';cursor.style.top=my+'px';
+});
+
+function animateRing(){
+  rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;
+  ring.style.left=Math.round(rx)+'px';ring.style.top=Math.round(ry)+'px';
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a,button,.pkg,.toggle').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.classList.add('hover');ring.classList.add('hover')});
+  el.addEventListener('mouseleave',()=>{cursor.classList.remove('hover');ring.classList.remove('hover')});
+});
+
+// BILLING TOGGLE
+const toggle = document.getElementById('billingToggle');
+const labelM = document.getElementById('label-mensual');
+const labelA = document.getElementById('label-anual');
+let isAnnual = false;
+
+toggle.addEventListener('click',()=>{
+  isAnnual = !isAnnual;
+  toggle.classList.toggle('on', isAnnual);
+  labelM.classList.toggle('active',!isAnnual);
+  labelA.classList.toggle('active',isAnnual);
+  document.querySelectorAll('.pkg-price').forEach(el=>{
+    el.style.opacity='0';el.style.transform='translateY(-6px)';
+    setTimeout(()=>{
+      el.textContent='$'+(isAnnual ? el.dataset.annual : el.dataset.monthly);
+      el.style.opacity='1';el.style.transform='translateY(0)';
+    },200);
+  });
+});
+
+// MODAL
+const modal = document.getElementById('modal');
+const modalClose = document.getElementById('modalClose');
+const modalPlan = document.getElementById('modal-plan');
+
+document.querySelectorAll('.pkg-cta').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    modalPlan.textContent='Plan '+btn.dataset.plan;
+    modal.classList.add('open');
+  });
+});
+
+modalClose.addEventListener('click',()=>modal.classList.remove('open'));
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('open')});
+
+// SCROLL REVEAL
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}
+  });
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
